@@ -14,42 +14,25 @@ Saida::Saida() {
 	// TODO Auto-generated constructor stub
 }
 
-Saida::Saida(int id, string txs, string sr, string vs){
-	this->id = id;
-	this->txs = txs;
-	this->sr = sr;
-	this->vs = vs;
+Saida::Saida(string at, string val) {
+    this->at = at;
+    this->val = val;
 }
 
-int Saida::getId() {
-	return id;
+void Saida::SetVal(string val) {
+    this->val = val;
 }
 
-void Saida::setId(int id) {
-	this->id = id;
+string Saida::GetVal() const {
+    return val;
 }
 
-string Saida::getSr() {
-	return sr;
+void Saida::SetAt(string at) {
+    this->at = at;
 }
 
-void Saida::setSr(string sr) {
-	this->sr = sr;
+string Saida::GetAt() const {
+    return at;
 }
 
-string Saida::getTxs() {
-	return txs;
-}
-
-void Saida::setTxs(string txs) {
-	this->txs = txs;
-}
-
-string Saida::getVs() {
-	return vs;
-}
-
-void Saida::setVs(string vs) {
-	this->vs = vs;
-}
 

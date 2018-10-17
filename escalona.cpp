@@ -10,6 +10,7 @@ using namespace std;
 
 #define ARQUIVO_ENTRADA "teste.in" // nome do arquivo de entrada
 #define ARQUIVO_SAIDA "teste.sol" // nome do arquivo de saída
+#define ARQUIVO_SAIDA_LOG "archive.log" // nome do arquivo de saída
 #define COMMIT "C" 
 #define ABORT "A" 
 #define WRITE "W"
@@ -59,9 +60,15 @@ void verificaTxWrite(unsigned idx, Esc *esc);
 */
 void geraLog(unsigned idx, Esc esc);
 
+int geraTimestamp (int tc);
+/*
+ * salva transacoes de arquivo de log
+ */
+void saidaArquivoLog();
+
 int main()
 {
-//    criarArquivoEntrada();
+    criarArquivoEntrada();
     carregaArquivoEntrada();
     triagemEscalonamento();
     for (unsigned i = 0; i < escListList.size(); i++){
@@ -73,10 +80,57 @@ int main()
     for (unsigned i = 0; i < escListList.size(); i++){
         geraLog(i, escListList.at(i));
     }
+    saidaArquivoLog();
     return 0;
 }
 
-int geraTimestamp ()
+
+
+/*
+ * salva transacoes de arquivo de log
+ */
+void saidaArquivoLog(){
+    FILE *fptr = fopen(ARQUIVO_SAIDA_LOG, "w");
+    unsigned i;
+    for (i = 0; i < logList.size(); i++){
+        if (logList.at(i).getValRes() == ""){
+            fprintf(fptr, "%d;%s;%s\n",
+            logList.at(i).getTs(),
+            logList.at(i).getTxId().c_str(),
+            logList.at(i).getOp().c_str());
+        }else{
+            fprintf(fptr, "%d;%s;%s;%s;%s\n",
+            logList.at(i).getTs(),
+            logList.at(i).getTxId().c_str(),
+            logList.at(i).getOp().c_str(),
+            logList.at(i).getValIni().c_str(),
+            logList.at(i).getValRes().c_str());
+        }
+    }
+    fclose(fptr);
+}
+
+void saidaArquivoAtributos(){
+    for (int k = logList.size()-1; k >= 0; k--){
+        if (logList.)
+    }
+}
+
+/*
+ * gera timestamp para transacoes de log
+ */
+int geraTimestamp (int tc){
+    int ts = 1; 
+    if (!logList.empty()
+            &&
+        logList.at(logList.size()-1).getTs() >= tc
+    )
+        ts = logList.at(logList.size()-1).getTs() + 1;
+    else
+        ts = tc;
+    
+    return ts;
+}
 /*
 * gera log de escalonamento nao seriallizavel
 */
@@ -86,15 +140,8 @@ void geraLog(unsigned idx, Esc esc){
 
         if (esc.GetEscListSort().at(i).getOp() == COMMIT){
             op = "commit";
-            int ts = 1; 
-            if (!logList.empty()
-                    &&
-                logList.at(logList.size()-1).getTs() >= esc.GetEscListSort().at(i).getTc()
-            )
-                ts = logList.size()+1;
-            else
-                ts = esc.GetEscListSort().at(i).getTc();
-            Log log(ts, // tempo de chegada
+            
+            Log log(geraTimestamp(esc.GetEscListSort().at(i).getTc()), // tempo de chegada
                 TX+to_string(esc.GetEscListSort().at(i).getId()), // identificador da transação 
                 op // operação   
             );
@@ -102,15 +149,7 @@ void geraLog(unsigned idx, Esc esc){
         }else
         if (esc.GetEscListSort().at(i).getOp() == ABORT){
             op = "abort";
-            int ts = 1; 
-            if (!logList.empty()
-                    &&
-                logList.at(logList.size()-1).getTs() >= esc.GetEscListSort().at(i).getTc()
-            )
-                ts = logList.size()+1;
-            else
-                ts = esc.GetEscListSort().at(i).getTc();
-            Log log(ts, // tempo de chegada
+            Log log(geraTimestamp(esc.GetEscListSort().at(i).getTc()), // tempo de chegada
                 TX+to_string(esc.GetEscListSort().at(i).getId()), // identificador da transação 
                 op // operação   
             );
@@ -134,15 +173,7 @@ void geraLog(unsigned idx, Esc esc){
                     }
                     if (!hasTxIdStart){
                         op = "start";
-                        int ts = 1; 
-                        if (!logList.empty()
-                                &&
-                            logList.at(logList.size()-1).getTs() >= esc.GetEscListSort().at(i).getTc()
-                        )
-                            ts = logList.size()+1;
-                        else
-                            ts = esc.GetEscListSort().at(i).getTc();
-                        Log log(ts, // tempo de chegada
+                        Log log(geraTimestamp(esc.GetEscListSort().at(i).getTc()), // tempo de chegada
                           TX+to_string(esc.GetEscListSort().at(i).getId()), // identificador da transação 
                           op // operação   
                         );
@@ -151,15 +182,7 @@ void geraLog(unsigned idx, Esc esc){
             
             }else{ // entra em else se a lisa de log nao serializavel estiver estiver vazia
                 op = "start";
-                int ts = 1; 
-                if (!logList.empty()
-                        &&
-                    logList.at(logList.size()-1).getTs() >= esc.GetEscListSort().at(i).getTc()
-                )
-                    ts = logList.size()+1;
-                else
-                    ts = esc.GetEscListSort().at(i).getTc();
-                Log log(ts, // tempo de chegada
+                Log log(geraTimestamp(esc.GetEscListSort().at(i).getTc()), // tempo de chegada
                     TX+to_string(esc.GetEscListSort().at(i).getId()), // identificador da transação 
                     op // operação   
                 );
@@ -184,15 +207,7 @@ void geraLog(unsigned idx, Esc esc){
 //                            logList.at(k).getTxId() == to_string(esc.GetIdList().at(j))
                     ){
                         string valIni = logList.at(k).getValRes();
-                        int ts = 1; 
-                        if (!logList.empty()
-                                &&
-                            logList.at(logList.size()-1).getTs() >= esc.GetEscListSort().at(i).getTc()
-                        )
-                            ts = logList.size()+1;
-                        else
-                            ts = esc.GetEscListSort().at(i).getTc();
-                        Log log(ts, // tempo de chegada
+                        Log log(geraTimestamp(esc.GetEscListSort().at(i).getTc()), // tempo de chegada
                             TX+to_string(esc.GetEscListSort().at(i).getId()), // identificador da transação 
                             esc.GetEscListSort().at(i).getAt(), // operação   
                             valIni, // valIni
@@ -211,15 +226,7 @@ void geraLog(unsigned idx, Esc esc){
 //                        logList.at(k).getTxId() == to_string(esc.GetIdList().at(j))
                     ){
                         string valIni = logList.at(k).getValRes();
-                        int ts = 1; 
-                        if (!logList.empty()
-                                &&
-                            logList.at(logList.size()-1).getTs() >= esc.GetEscListSort().at(i).getTc()
-                        )
-                            ts = logList.size()+1;
-                        else
-                            ts = esc.GetEscListSort().at(i).getTc();
-                        Log log(ts, // tempo de chegada
+                        Log log(geraTimestamp(esc.GetEscListSort().at(i).getTc()), // tempo de chegada
                             TX+to_string(esc.GetEscListSort().at(i).getId()), // identificador da transação 
                             esc.GetEscListSort().at(i).getAt(), // operação   
                             valIni, // valIni
@@ -238,15 +245,7 @@ void geraLog(unsigned idx, Esc esc){
                     string o = TX+to_string(esc.GetEscListSort().at(i).getId());
                     string j = esc.GetEscListSort().at(i).getAt();
                     string d = esc.GetEscListSort().at(i).getWr();
-                    int ts = 1; 
-                    if (!logList.empty()
-                            &&
-                        logList.at(logList.size()-1).getTs() >= esc.GetEscListSort().at(i).getTc()
-                    )
-                        ts = logList.size()+1;
-                    else
-                        ts = esc.GetEscListSort().at(i).getTc();
-                    Log log(ts, // tempo de chegada
+                    Log log(geraTimestamp(esc.GetEscListSort().at(i).getTc()), // tempo de chegada
                             TX+to_string(esc.GetEscListSort().at(i).getId()), 
                             esc.GetEscListSort().at(i).getAt(), 
                             NULO, 
@@ -318,21 +317,6 @@ void ordenaEscNaoSerial(unsigned idx, Esc *esc){
     escListList.at(idx).SetEscListSort(escListSort);
 }
 
-/*
-* 
-*/
-//void writeLogIsSerial(Esc esc){
-//    FILE *fptr = fopen(ARQUIVO_SAIDA, "w");
-//	unsigned i;
-//	for (i = 0; i < esc.GetEscList().size(); i++){
-//            fprintf(fptr, "%d %s %s %s %s\n",
-//                esc.GetEscList().at(i).getId(),
-//                esc.GetEscList().at(i).getTxs().c_str(),
-//                esc.GetEscList().at(i).getSr().c_str(),
-//                esc.GetEscList().at(i).getVs().c_str());
-//	}
-//	fclose(fptr);
-//}
 /*
  * insere transacoes em grafo de acordo com regras de conflito de serializacao para verificacao de seriabilidade quanto ao conflito
  */

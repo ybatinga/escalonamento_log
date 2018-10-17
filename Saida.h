@@ -13,22 +13,15 @@ using namespace std;
 class Saida {
 public:
 	Saida();
-	Saida(int id, string txs, string sr, string vs);
-
-	int getId();
-	void setId(int id);
-	string getSr();
-	void setSr(string sr);
-	string getTxs();
-	void setTxs(string txs);
-	string getVs();
-	void setVs(string vs);
+	Saida(string at, string val);
+        void SetVal(string val);
+        string GetVal() const;
+        void SetAt(string at);
+        string GetAt() const;
 
 private:
-	int id; //  identificador do escalonamento
-	string txs; // lista de transações
-	string sr; // resultado do algoritmo da garantia da seriabilidade, onde SS e NS significam respectivamente serial (SS) ou não serial (NS)
-	string vs; // resultado do algoritmo de teste de equivalência de visão, onde SV e NV significam respectivamente equivalente (SV) ou não equivalente (NV)
+	string at; // atributo. Ex.: X / Y
+	string val; // valor do atributo 
 };
 
 #endif /* SAIDA_H_ */
