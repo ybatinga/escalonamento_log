@@ -33,6 +33,9 @@ public:
     vector<Log> GetLogList();
     void SetEscListSort(vector<Tx> escListSortNS);
     vector<Tx> GetEscListSort() const;
+    void SetIdNoWList(vector<int> idNoWList);
+    vector<int> GetIdNoWList() const;
+
 private:
     bool isSerial; // serializavel se nao houver ciclo
     vector<Tx> escList; // transacoes de um escalonamento
@@ -41,6 +44,7 @@ private:
     // primeiro somente transacoes 1 executam; em seguida somente transacoes 2 executam; em seguida somente transacoes 3 executam; etc.
     vector<Log> logList; 
     vector<Tx> escListSort; // lista de transacoes de escalonamento nao serial ordenadas por txId
+    vector<int> idNoWList; // ids que nao possuem operacao Write
 
 };
 

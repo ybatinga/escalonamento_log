@@ -68,3 +68,11 @@ vector<Tx> Esc::GetEscListSort() const {
     return escListSort;
 }
 
+void Esc::SetIdNoWList(vector<int> idNoWList) {
+    this->idNoWList = idNoWList;
+}
+
+vector<int> Esc::GetIdNoWList() const {
+    return idNoWList;
+}
+
