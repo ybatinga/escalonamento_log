@@ -1,5 +1,5 @@
 build/Debug/GNU-Linux/escalona.o: escalona.cpp Tx.h Esc.h Log.h Graph.h \
- TxIdx.h
+ TxIdx.h Saida.h
 
 Tx.h:
 
@@ -10,3 +10,5 @@ Log.h:
 Graph.h:
 
 TxIdx.h:
+
+Saida.h:

@@ -5,19 +5,23 @@ using namespace std;
 #include "Esc.h"
 #include "Graph.h"
 #include "TxIdx.h"
+#include "Saida.h"
 #include <vector>
 #include <algorithm> // std::find
+#include <cstring>
 
 #define ARQUIVO_ENTRADA "teste.in" // nome do arquivo de entrada
 #define ARQUIVO_SAIDA "teste.sol" // nome do arquivo de saída
 #define ARQUIVO_SAIDA_LOG "archive.log" // nome do arquivo de saída
-#define COMMIT "C" 
-#define ABORT "A" 
+#define C "C" // commit
+#define A "A" // abort
 #define WRITE "W"
 #define READ "R"
 #define START "start"
 #define NULO "NULL"
-#define TX "T"
+#define COMMIT "commit"
+#define ABORT "abort"
+#define TX "T" // transacao
 
 int tc; // tempo de chegada
 int id; // identificador da transação
@@ -26,7 +30,8 @@ char at[5]; // atributo lido/escrito
 char wr[5]; // em caso de operacao write
 vector<Tx> txList; // lista de transacoes
 vector<Esc> escListList; // lista de escalonamentos 
-vector<Log> logList; 
+vector<Log> logList; // lista de transacoes de log
+vector<Log> saidaLogList; // lista de resultado de saida de log
 
 /*
  * função para criação de arquivo de entrada com dados fornecidos
@@ -59,12 +64,20 @@ void verificaTxWrite(unsigned idx, Esc *esc);
 * gera log de escalonamento 
 */
 void geraLog(unsigned idx, Esc esc);
-
+/*
+ * gera timestamp para transacoes de log
+ */
 int geraTimestamp (int tc);
 /*
  * salva transacoes de arquivo de log
  */
-void saidaArquivoLog();
+void salvaArquivoLog();
+/*
+ * salva transacoes de arquivo de log
+ */
+void geraSaidaLog();
+
+void salvaArquivoAtributos();
 
 int main()
 {
@@ -75,45 +88,115 @@ int main()
         testeSeriabilidadeConflito(i, &escListList.at(i));
         verificaTxWrite(i, &escListList.at(i));
         ordenaEscNaoSerial(i, &escListList.at(i));
-
     }
     for (unsigned i = 0; i < escListList.size(); i++){
         geraLog(i, escListList.at(i));
     }
-    saidaArquivoLog();
+    geraSaidaLog();
+    salvaArquivoLog();
+    salvaArquivoAtributos();
     return 0;
 }
 
+void salvaArquivoAtributos(){
+    FILE *fptr = fopen(ARQUIVO_SAIDA, "w");
 
-
-/*
- * salva transacoes de arquivo de log
- */
-void saidaArquivoLog(){
-    FILE *fptr = fopen(ARQUIVO_SAIDA_LOG, "w");
-    unsigned i;
-    for (i = 0; i < logList.size(); i++){
-        if (logList.at(i).getValRes() == ""){
-            fprintf(fptr, "%d;%s;%s\n",
-            logList.at(i).getTs(),
-            logList.at(i).getTxId().c_str(),
-            logList.at(i).getOp().c_str());
-        }else{
-            fprintf(fptr, "%d;%s;%s;%s;%s\n",
-            logList.at(i).getTs(),
-            logList.at(i).getTxId().c_str(),
-            logList.at(i).getOp().c_str(),
-            logList.at(i).getValIni().c_str(),
-            logList.at(i).getValRes().c_str());
-        }
+    for (int i = 0; i < saidaLogList.size(); i++){
+        
+        int ts = logList.at(i).getTs(); // tempo de stamp da transacao em log
+//	string txId = logList.at(i).getTxId(); // identificador da transação
+//	string op = logList.at(i).getOp(); // operação 
+//	string valIni = logList.at(i).getValIni(); // valor de inicio
+//	string valRes = logList.at(i).getValRes(); // valor atualizado
+        char txId[9];
+	char op[9];
+	char valIni[9];
+	char valRes[9];
+        strcpy(txId, logList.at(i).getTxId().c_str());
+        strcpy(op, logList.at(i).getOp().c_str());
+        strcpy(valIni, logList.at(i).getValIni().c_str());
+        strcpy(valRes, logList.at(i).getValRes().c_str());
+        if (logList.at(i).getValRes() != "")
+            fprintf(fptr, "%d;%s;%s;%s;%s\n", ts, txId, op, valIni, valRes);
+        else
+            fprintf(fptr, "%d;%s;%s\n", ts, txId, op);
+        
     }
     fclose(fptr);
 }
 
-void saidaArquivoAtributos(){
-    for (int k = logList.size()-1; k >= 0; k--){
-        if (logList.)
+/*
+ * gera transacoes de arquivo de log
+ */
+void geraSaidaLog(){
+
+    vector<Log> lgAbrtL; // armazena transacoes com abort
+    // percorre a lista de log para armazenar transacoes com abort
+    for (int i = 0; i < logList.size(); i++){
+        if (logList.at(i).getOp() == ABORT){
+            lgAbrtL.push_back(logList.at(i));
+        }
+            
     }
+    // percorre a lista de log
+    for (int i = 0; i < logList.size(); i++){
+        // verifica se lista de saida esta vazia.
+        // se estiver vazia, cria um novo registra na lista de saida
+        if (logList.at(i).getValIni() == NULO
+                &&
+            logList.at(i).getValRes() != ""){
+//            Saida saida(logList.at(i).getOp(), logList.at(i).getValRes());
+            saidaLogList.push_back(logList.at(i));
+        }else // se nao estiver vazia, substitui o valor de resultado na lista de saida
+        if (logList.at(i).getValIni() != ""
+                &&
+            logList.at(i).getValRes() != ""){
+            bool isAbort = false;
+            for (int j = 0; j < lgAbrtL.size(); j++){ 
+                if (lgAbrtL.at(j).getTxId() == logList.at(i).getTxId()){
+                    isAbort = true;
+                }
+            }
+            if (!isAbort){
+                for (int j = 0; j < saidaLogList.size(); j++){ 
+
+                    if (
+                        saidaLogList.at(j).getOp() == logList.at(i).getOp()
+                    ){
+                        saidaLogList.erase(saidaLogList.begin() + j);
+                        saidaLogList.push_back(logList.at(i));
+                    }
+                }
+            }
+        }
+    }
+}
+
+void salvaArquivoLog(){
+    FILE *fptr = fopen(ARQUIVO_SAIDA_LOG, "w");
+
+    for (int i = 0; i < logList.size(); i++){
+        
+        int ts = logList.at(i).getTs(); // tempo de stamp da transacao em log
+//	string txId = logList.at(i).getTxId(); // identificador da transação
+//	string op = logList.at(i).getOp(); // operação 
+//	string valIni = logList.at(i).getValIni(); // valor de inicio
+//	string valRes = logList.at(i).getValRes(); // valor atualizado
+        char txId[9];
+	char op[9];
+	char valIni[9];
+	char valRes[9];
+        strcpy(txId, logList.at(i).getTxId().c_str());
+        strcpy(op, logList.at(i).getOp().c_str());
+        strcpy(valIni, logList.at(i).getValIni().c_str());
+        strcpy(valRes, logList.at(i).getValRes().c_str());
+        if (logList.at(i).getValRes() != "")
+            fprintf(fptr, "%d;%s;%s;%s;%s\n", ts, txId, op, valIni, valRes);
+        else
+            fprintf(fptr, "%d;%s;%s\n", ts, txId, op);
+        
+    }
+    fclose(fptr);
 }
 
 /*
@@ -121,12 +204,15 @@ void saidaArquivoAtributos(){
  */
 int geraTimestamp (int tc){
     int ts = 1; 
+    // se a lista nao estiver vazia, a transacao de timestamp recebe o valor de timestamp da transacao
+    // ou se o valor de timestamp da transacao for menor que o timestamp da lista de log,
+    // 
     if (!logList.empty()
             &&
         logList.at(logList.size()-1).getTs() >= tc
     )
         ts = logList.at(logList.size()-1).getTs() + 1;
-    else
+    else // se a lista de log estiver vazia, o primeiro timestamp recebe valor 1
         ts = tc;
     
     return ts;
@@ -138,8 +224,8 @@ void geraLog(unsigned idx, Esc esc){
     for (int i = 0; i < esc.GetEscListSort().size(); i++){
         string op;
 
-        if (esc.GetEscListSort().at(i).getOp() == COMMIT){
-            op = "commit";
+        if (esc.GetEscListSort().at(i).getOp() == C){
+            op = COMMIT;
             
             Log log(geraTimestamp(esc.GetEscListSort().at(i).getTc()), // tempo de chegada
                 TX+to_string(esc.GetEscListSort().at(i).getId()), // identificador da transação 
@@ -147,8 +233,8 @@ void geraLog(unsigned idx, Esc esc){
             );
             logList.push_back(log);
         }else
-        if (esc.GetEscListSort().at(i).getOp() == ABORT){
-            op = "abort";
+        if (esc.GetEscListSort().at(i).getOp() == A){
+            op = ABORT;
             Log log(geraTimestamp(esc.GetEscListSort().at(i).getTc()), // tempo de chegada
                 TX+to_string(esc.GetEscListSort().at(i).getId()), // identificador da transação 
                 op // operação   
@@ -408,11 +494,11 @@ void triagemEscalonamento(){
 			if (
 				(txAux.getId() != 0)
 					&&
-				(txAux.getOp() == "C")
+				(txAux.getOp() == C)
 					&&
-				(txi.getOp() == "C")
+				(txi.getOp() == C)
 					||
-				(txi.getOp() == "A")
+				(txi.getOp() == A)
 			){
 				j = i; // salva checkpoint para novo escalonamento
 				break;
