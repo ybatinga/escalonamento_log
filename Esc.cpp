@@ -15,15 +15,21 @@
 #include "Tx.h"
 #include "Log.h"
 #include <vector>
+#include <list>
 using namespace std;
 Esc::Esc() {
 }
 
-Esc::Esc(vector<Tx> escList, vector<int> idList) {
-    this->escList = escList;
+Esc::Esc(vector<int> idList) {
     this->idList = idList;
     this->isSerial = false;
 }
+
+//Esc::Esc(vector<Tx> escList, vector<int> idList) {
+//    this->escList = escList;
+//    this->idList = idList;
+//    this->isSerial = false;
+//}
 
 Esc::~Esc() {
 }
@@ -75,4 +81,6 @@ void Esc::SetIdNoWList(vector<int> idNoWList) {
 vector<int> Esc::GetIdNoWList() const {
     return idNoWList;
 }
+
+
 

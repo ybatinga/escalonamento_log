@@ -15,13 +15,15 @@
 #ifndef ESC_H
 #define ESC_H
 #include <vector>
+#include <list>
 #include "Tx.h"
 #include "Log.h"
 using namespace std;
 class Esc {
 public:
     Esc();
-    Esc(vector<Tx> escList, vector<int> idList) ;
+    Esc(vector<int> idList) ;
+//    Esc(vector<Tx> escList, vector<int> idList) ;
     virtual ~Esc();
     void SetEscList(vector<Tx> escList);
     vector<Tx> GetEscList();
@@ -35,7 +37,6 @@ public:
     vector<Tx> GetEscListSort() const;
     void SetIdNoWList(vector<int> idNoWList);
     vector<int> GetIdNoWList() const;
-
 private:
     bool isSerial; // serializavel se nao houver ciclo
     vector<Tx> escList; // transacoes de um escalonamento

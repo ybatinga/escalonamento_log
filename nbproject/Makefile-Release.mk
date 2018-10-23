@@ -39,7 +39,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/EvTx.o \
 	${OBJECTDIR}/Graph.o \
 	${OBJECTDIR}/Log.o \
-	${OBJECTDIR}/Saida.o \
 	${OBJECTDIR}/Tx.o \
 	${OBJECTDIR}/TxIdx.o \
 	${OBJECTDIR}/escalona.o
@@ -88,11 +87,6 @@ ${OBJECTDIR}/Log.o: Log.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Log.o Log.cpp
-
-${OBJECTDIR}/Saida.o: Saida.cpp
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Saida.o Saida.cpp
 
 ${OBJECTDIR}/Tx.o: Tx.cpp
 	${MKDIR} -p ${OBJECTDIR}

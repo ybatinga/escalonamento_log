@@ -8,7 +8,6 @@
       <itemPath>EvTx.h</itemPath>
       <itemPath>Graph.h</itemPath>
       <itemPath>Log.h</itemPath>
-      <itemPath>Saida.h</itemPath>
       <itemPath>Tx.h</itemPath>
       <itemPath>TxIdx.h</itemPath>
     </logicalFolder>
@@ -24,7 +23,6 @@
       <itemPath>EvTx.cpp</itemPath>
       <itemPath>Graph.cpp</itemPath>
       <itemPath>Log.cpp</itemPath>
-      <itemPath>Saida.cpp</itemPath>
       <itemPath>Tx.cpp</itemPath>
       <itemPath>TxIdx.cpp</itemPath>
       <itemPath>escalona.cpp</itemPath>
@@ -75,10 +73,6 @@
       <item path="Log.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Log.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Saida.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Saida.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Tx.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -131,10 +125,6 @@
       <item path="Log.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Log.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Saida.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Saida.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Tx.cpp" ex="false" tool="1" flavor2="0">
       </item>
