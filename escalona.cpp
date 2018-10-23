@@ -89,7 +89,7 @@ void ordenaEsc();
 
 int main()
 {
-    criarArquivoEntrada();
+//    criarArquivoEntrada();
     carregaArquivoEntrada();
     triagemIdsEsc();
     triagemEscalonamento();
@@ -121,23 +121,6 @@ void ordenaEsc(){
 	}
         escListList.at(k).SetEscList(escList);
     }
-}
-
-/*
- * salva em arquivo valores de atributos executados em log
- */
-void salvaArquivoAtributos(){
-    FILE *fptr = fopen(ARQUIVO_SAIDA, "w");
-
-    for (unsigned i = 0; i < saidaLogList.size(); i++){      
-        char atr[9]; // atributo
-	char val[9]; // valor de atributo
-        strcpy(atr, saidaLogList.at(i).getOp().c_str());
-        strcpy(val, saidaLogList.at(i).getValRes().c_str());
-        fprintf(fptr, "%s;%s\n", atr, val);
-        
-    }
-    fclose(fptr);
 }
 
 /*
@@ -597,14 +580,33 @@ void testeSeriabilidadeConflito(){
     
 }
 /*
+ * salva em arquivo valores de atributos executados em log
+ */
+void salvaArquivoAtributos(){
+//    FILE *fptr = fopen(ARQUIVO_SAIDA, "w");
+
+    for (unsigned i = 0; i < saidaLogList.size(); i++){      
+        char atr[9]; // atributo
+	char val[9]; // valor de atributo
+        strcpy(atr, saidaLogList.at(i).getOp().c_str());
+        strcpy(val, saidaLogList.at(i).getValRes().c_str());
+//        fprintf(fptr, "%s;%s\n", atr, val);
+        fprintf(stdout, "%s;%s\n", atr, val);
+
+    }
+//    fclose(fptr);
+    fclose(stdout);
+}
+
+/*
  * carrega transacoes de arquivo de entrada
  */
 void carregaArquivoEntrada(){
-	FILE *fptr = fopen(ARQUIVO_ENTRADA, "r");
+//	FILE *fptr = fopen(ARQUIVO_ENTRADA, "r");
 
 //	fonte: https://support.microsoft.com/en-hk/help/60336/the-fscanf-function-does-not-read-consecutive-lines-as-expected
-//	while (fscanf(stdin, "%d %d %[^ ] %[^ ] %[^\n]\n", &tc, &id, op, at, wr) != EOF) // carrega arquivo pela linha de comando no terminal
-	while (fscanf(fptr, "%d %d %[^ ] %[^ ] %[^\n]\n", &tc, &id, op, at, wr) != EOF)
+	while (fscanf(stdin, "%d %d %[^ ] %[^ ] %[^\n]\n", &tc, &id, op, at, wr) != EOF) // carrega arquivo pela linha de comando no terminal
+//	while (fscanf(fptr, "%d %d %[^ ] %[^ ] %[^\n]\n", &tc, &id, op, at, wr) != EOF)
 	{
 		// carrega cada linha de arquivo de entrada em objeto Tx
 		Tx tx (tc, id, op, at, wr);
