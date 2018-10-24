@@ -10,24 +10,17 @@ CXXFLAGS = -Wall -g
 # ****************************************************
 # Targets needed to bring the executable up to date
 
-escalona: escalona.o Esc.o Tx.o EvTx.o Graph.o TxIdx.o Log.o 
-	$(CXX) $(CXXFLAGS) -o escalona escalona.o Esc.o Tx.o EvTx.o Graph.o  TxIdx.o Log.o 
+escalona: escalona.o Esc.o EvTx.o Graph.o Log.o Tx.o TxIdx.o  
+	$(CXX) $(CXXFLAGS) -o escalona escalona.o Esc.o EvTx.o Graph.o Log.o Tx.o TxIdx.o  
 
 # The main.o target can be written more simply
 
-escalona.o: escalona.cpp Esc.h Log.h Tx.h EvTx.h Graph.h TxIdx.h
+escalona.o: escalona.cpp Esc.h EvTx.h Graph.h Log.h Tx.h TxIdx.h  
 	$(CXX) $(CXXFLAGS) -c escalona.cpp
 
 Esc.o: Esc.h Log.h
-
-Log.o: Log.h
-	
-Tx.o: Tx.h
-
 EvTx.o: EvTx.h 
-
 Graph.o: Graph.h
-	
 Log.o: Log.h
-	
+Tx.o: Tx.h
 TxIdx.o: TxIdx.h

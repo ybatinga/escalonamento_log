@@ -66,7 +66,7 @@ void ordenaEscNaoSerial();
  */
 void verificaTxWrite();
 /*
-* gera log de escalonamento 
+* gera log de escalonamentos 
 */
 void geraLog();
 /*
@@ -95,7 +95,7 @@ int main()
     triagemEscalonamento();
     ordenaEsc();
     testeSeriabilidadeConflito();
-    verificaTxWrite();
+//    verificaTxWrite();
     ordenaEscNaoSerial();
     geraLog();
     geraSaidaLog();
@@ -213,7 +213,7 @@ int geraTimestamp (int tc){
     return ts;
 }
 /*
-* gera log de escalonamento nao seriallizavel
+* gera log de escalonamentos 
 */
 void geraLog(){
     for (unsigned l = 0; l < escListList.size(); l++){
@@ -342,31 +342,31 @@ void geraLog(){
     }
 }
 
-/*
- * cria um indexador em forma de lista identificando qual transacao em um escalonamento possui uma operacao Write
- */
-void verificaTxWrite(){
-    vector<int> idNoWList; // ids que nao possuem operacao Write
-    for (unsigned k = 0; k < escListList.size(); k++){
-        Esc* esc = &escListList.at(k);
-        for (unsigned i = 0; i <esc->GetIdList().size(); i++){
-            bool hasW = false;
-            for (unsigned j = 0; j < esc->GetEscList().size(); j++){
-                if (esc->GetEscList().at(j).getId() == esc->GetIdList().at(i)){
-                    if (esc->GetEscList().at(j).getOp() == W){
-                        hasW = true;
-                    }
-                }
-            }
-            if (!hasW){
-                idNoWList.push_back(esc->GetIdList().at(i));
-                escListList.at(k).SetIdNoWList(idNoWList);
-            }
-        }
-        idNoWList.clear();
-    }
-        
-}
+///*
+// * cria um indexador em forma de lista identificando qual transacao em um escalonamento possui uma operacao Write
+// */
+//void verificaTxWrite(){
+//    vector<int> idNoWList; // ids que nao possuem operacao Write
+//    for (unsigned k = 0; k < escListList.size(); k++){
+//        Esc* esc = &escListList.at(k);
+//        for (unsigned i = 0; i <esc->GetIdList().size(); i++){
+//            bool hasW = false;
+//            for (unsigned j = 0; j < esc->GetEscList().size(); j++){
+//                if (esc->GetEscList().at(j).getId() == esc->GetIdList().at(i)){
+//                    if (esc->GetEscList().at(j).getOp() == W){
+//                        hasW = true;
+//                    }
+//                }
+//            }
+//            if (!hasW){
+//                idNoWList.push_back(esc->GetIdList().at(i));
+//                escListList.at(k).SetIdNoWList(idNoWList);
+//            }
+//        }
+//        idNoWList.clear();
+//    }
+//        
+//}
 
 /*
  * ordena transacoes de escalonamento nao serializavel para escrita em log 
@@ -384,14 +384,14 @@ void ordenaEscNaoSerial(){
             for (unsigned i = 0; i < esc->GetIdList().size(); i++){
                 for (unsigned j = 0; j < esc->GetEscList().size(); j++){
                     if (esc->GetEscList().at(j).getId() == esc->GetIdList().at(i)){
-                        if (!esc->GetIdNoWList().empty()){
-                            for (unsigned k = 0; k < esc->GetIdNoWList().size(); k++){
-                                if (esc->GetEscList().at(j).getId() != esc->GetIdNoWList().at(k))
+//                        if (!esc->GetIdNoWList().empty()){
+//                            for (unsigned k = 0; k < esc->GetIdNoWList().size(); k++){
+//                                if (esc->GetEscList().at(j).getId() != esc->GetIdNoWList().at(k))
                                     escListSort.push_back(esc->GetEscList().at(j));
-                            }
-                        }else{
-                            escListSort.push_back(esc->GetEscList().at(j));
-                        }
+//                            }
+//                        }else{
+//                            escListSort.push_back(esc->GetEscList().at(j));
+//                        }
 
                     }
                 }
@@ -407,7 +407,9 @@ void ordenaEscNaoSerial(){
         escListList.at(l).SetEscListSort(escListSort);
     }
 }
-
+/*
+ * triagem grupo de transacoes de escalonamento
+ */
 void triagemEscalonamento(){
     for (unsigned i = 0; i < escListList.size(); i++){
         Esc esc = escListList.at(i);
@@ -590,11 +592,15 @@ void salvaArquivoAtributos(){
 	char val[9]; // valor de atributo
         strcpy(atr, saidaLogList.at(i).getOp().c_str());
         strcpy(val, saidaLogList.at(i).getValRes().c_str());
+        // imprime arquivo atribuido pela variavel "FILE *fptr = fopen(ARQUIVO_SAIDA, "w");"
 //        fprintf(fptr, "%s;%s\n", atr, val);
+        // imprime um arquivo com nome designado via comando de terminal: "$ ./escalona < teste.in > teste.out" 
         fprintf(stdout, "%s;%s\n", atr, val);
 
     }
+    // imprime arquivo atribuido pela variavel "FILE *fptr = fopen(ARQUIVO_SAIDA, "w");"
 //    fclose(fptr);
+    // imprime um arquivo com nome designado via comando de terminal: "$ ./escalona < teste.in > teste.out" 
     fclose(stdout);
 }
 
@@ -605,7 +611,9 @@ void carregaArquivoEntrada(){
 //	FILE *fptr = fopen(ARQUIVO_ENTRADA, "r");
 
 //	fonte: https://support.microsoft.com/en-hk/help/60336/the-fscanf-function-does-not-read-consecutive-lines-as-expected
+        // stdin eh usado para ler arquivo executado pela linha de comando via terminal
 	while (fscanf(stdin, "%d %d %[^ ] %[^ ] %[^\n]\n", &tc, &id, op, at, wr) != EOF) // carrega arquivo pela linha de comando no terminal
+        // fptr usado para ler arquivo de variavel: "FILE *fptr = fopen(ARQUIVO_ENTRADA, "r");"
 //	while (fscanf(fptr, "%d %d %[^ ] %[^ ] %[^\n]\n", &tc, &id, op, at, wr) != EOF)
 	{
 		// carrega cada linha de arquivo de entrada em objeto Tx
