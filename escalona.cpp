@@ -24,11 +24,6 @@ using namespace std;
 #define ABORT "abort"
 #define TX "T" // transacao
 
-int tc; // tempo de chegada
-int id; // identificador da transação
-char op[5]; // operação (R=read, W=write, C=commit)
-char at[5]; // atributo lido/escrito
-char wr[5]; // em caso de operacao write
 vector<Tx> txList; // lista de transacoes
 vector<Esc> escListList; // lista de escalonamentos 
 vector<Log> logList; // lista de transacoes de log
@@ -95,7 +90,6 @@ int main()
     triagemEscalonamento();
     ordenaEsc();
     testeSeriabilidadeConflito();
-//    verificaTxWrite();
     ordenaEscNaoSerial();
     geraLog();
     geraSaidaLog();
@@ -600,8 +594,6 @@ void salvaArquivoAtributos(){
     }
     // imprime arquivo atribuido pela variavel "FILE *fptr = fopen(ARQUIVO_SAIDA, "w");"
 //    fclose(fptr);
-    // imprime um arquivo com nome designado via comando de terminal: "$ ./escalona < teste.in > teste.out" 
-    fclose(stdout);
 }
 
 /*
@@ -609,19 +601,44 @@ void salvaArquivoAtributos(){
  */
 void carregaArquivoEntrada(){
 //	FILE *fptr = fopen(ARQUIVO_ENTRADA, "r");
-
+        char buf[20];
+        char tc[5]; // tempo de chegada
+        char id[5]; // identificador da transação
+        char op[5]; // operação (R=read, W=write, C=commit)
+        char at[5]; // atributo lido/escrito
+        char wr[5]; // em caso de operacao write
 //	fonte: https://support.microsoft.com/en-hk/help/60336/the-fscanf-function-does-not-read-consecutive-lines-as-expected
         // stdin eh usado para ler arquivo executado pela linha de comando via terminal
-	while (fscanf(stdin, "%d %d %[^ ] %[^ ] %[^\n]\n", &tc, &id, op, at, wr) != EOF) // carrega arquivo pela linha de comando no terminal
+//	while (fscanf(stdin, "%d %d %[^ ] %[^ ] %[^\n]\n", &tc, &id, op, at, wr) != EOF) // carrega arquivo pela linha de comando no terminal
         // fptr usado para ler arquivo de variavel: "FILE *fptr = fopen(ARQUIVO_ENTRADA, "r");"
 //	while (fscanf(fptr, "%d %d %[^ ] %[^ ] %[^\n]\n", &tc, &id, op, at, wr) != EOF)
-	{
-		// carrega cada linha de arquivo de entrada em objeto Tx
-		Tx tx (tc, id, op, at, wr);
-		// insere objeto Tx em lista
-		txList.push_back(tx);
+//	while (fgets(buf,sizeof(buf), fptr) != NULL)
+        // carrega cada linha do arquivo
+        while (fgets(buf,sizeof(buf), stdin) != NULL)
+	{       
+            buf[strlen(buf) - 1] = '\0'; // eat the newline fgets() stores
+            
+            // inicia variaveis com vazio/nulo
+            tc[0] = '\0';
+            id[0] = '\0';
+            op[0] = '\0';
+            at[0] = '\0';
+            wr[0] = '\0';
+            
+            // le cada linha
+            sscanf(buf, "%s %s %s %s %s", tc, id, op, at, wr);
+            string a;
+            a += tc;
+            string b;
+            b += id;
+            
+            // carrega cada linha de arquivo de entrada em objeto Tx
+            Tx tx (atoi(a.c_str()), atoi(b.c_str()), op, at, wr);
+//		// insere objeto Tx em lista
+            txList.push_back(tx);
 //		printf("%d %d %s %s\n", tc, id, op, at);
 	}
+//        fclose(fptr);
 }
 
 /*
@@ -634,17 +651,17 @@ void criarArquivoEntrada(){
     fprintf(fptr, "%d %d %s %s %s\n", 2, 2, "R", "X", "-");
     fprintf(fptr, "%d %d %s %s %s\n", 3, 2, "W", "X", "100");
     fprintf(fptr, "%d %d %s %s %s\n", 4, 1, "W", "X", "200");
-    fprintf(fptr, "%d %d %s %s %s\n", 5, 1, "C", "-", "-");
     fprintf(fptr, "%d %d %s %s %s\n", 6, 2, "C", "-", "-");
     fprintf(fptr, "%d %d %s %s %s\n", 7, 3, "R", "X", "-");
     fprintf(fptr, "%d %d %s %s %s\n", 8, 3, "R", "Y", "-");
     fprintf(fptr, "%d %d %s %s %s\n", 9, 4, "R", "X", "-");
+    fprintf(fptr, "%d %d %s %s %s\n", 5, 1, "C", "-", "-");
     fprintf(fptr, "%d %d %s %s %s\n", 10, 3, "W", "Y", "150");
     fprintf(fptr, "%d %d %s %s %s\n", 11, 4, "C", "-", "-");
-    fprintf(fptr, "%d %d %s %s %s\n", 12, 3, "C", "-", "-");
     fprintf(fptr, "%d %d %s %s %s\n", 14, 5, "R", "Y", "-");
     fprintf(fptr, "%d %d %s %s %s\n", 15, 6, "R", "Y", "-");
     fprintf(fptr, "%d %d %s %s %s\n", 16, 6, "W", "Y", "450");
+    fprintf(fptr, "%d %d %s %s %s\n", 12, 3, "C", "-", "-");
     fprintf(fptr, "%d %d %s %s %s\n", 19, 5, "W", "Y", "-50");
     fprintf(fptr, "%d %d %s %s %s\n", 20, 5, "C", "-", "-");
     fprintf(fptr, "%d %d %s %s %s\n", 21, 6, "A", "-", "-");
