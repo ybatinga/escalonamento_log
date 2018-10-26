@@ -414,7 +414,7 @@ void triagemEscalonamento(){
                 for (unsigned l = 0; l < txList.size();l++){
                     Tx tx = txList.at(l);
                     if (tx.getId() == id){
-                        tx.setIdG(j+1);
+                        tx.setIdG(j);
                         escList.push_back(tx);
                     }
                 }
@@ -560,7 +560,7 @@ void testeSeriabilidadeConflito(){
                             (txi.getOp() == W && txj.getOp() == W)
                     ){
                             // adiciona aresta em grafo
-                            g.addEdge(txi.getIdG(), txj.getIdG());
+                            g->addEdge(txi.getIdG(), txj.getIdG());
                     }
                 }
             }
