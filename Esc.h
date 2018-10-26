@@ -22,7 +22,7 @@ using namespace std;
 class Esc {
 public:
     Esc();
-    Esc(vector<int> idList) ;
+    Esc(vector<int> idList);
 //    Esc(vector<Tx> escList, vector<int> idList) ;
     virtual ~Esc();
     void SetEscList(vector<Tx> escList);

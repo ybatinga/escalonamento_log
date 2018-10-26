@@ -12,6 +12,7 @@ using namespace std;
 
 Tx::Tx(){
 }
+
 Tx::Tx(int tc, int id, string op, string at, string wr){
 	this->tc = tc;
 	this->id = id;
@@ -58,4 +59,12 @@ string Tx::getWr(){
 
 void Tx::setWr(string wr) {
 	this->wr = wr;
+}
+
+void Tx::setIdG(int idG) {
+    this->idG = idG;
+}
+
+int Tx::getIdG() const {
+    return idG;
 }

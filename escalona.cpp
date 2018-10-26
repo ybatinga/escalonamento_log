@@ -414,6 +414,7 @@ void triagemEscalonamento(){
                 for (unsigned l = 0; l < txList.size();l++){
                     Tx tx = txList.at(l);
                     if (tx.getId() == id){
+                        tx.setIdG(j+1);
                         escList.push_back(tx);
                     }
                 }
@@ -559,7 +560,7 @@ void testeSeriabilidadeConflito(){
                             (txi.getOp() == W && txj.getOp() == W)
                     ){
                             // adiciona aresta em grafo
-                            g->addEdge(txi.getId(), txj.getId());
+                            g.addEdge(txi.getIdG(), txj.getIdG());
                     }
                 }
             }
@@ -607,18 +608,20 @@ void carregaArquivoEntrada(){
         char op[5]; // operação (R=read, W=write, C=commit)
         char at[5]; // atributo lido/escrito
         char wr[5]; // em caso de operacao write
+        
 //	fonte: https://support.microsoft.com/en-hk/help/60336/the-fscanf-function-does-not-read-consecutive-lines-as-expected
         // stdin eh usado para ler arquivo executado pela linha de comando via terminal
 //	while (fscanf(stdin, "%d %d %[^ ] %[^ ] %[^\n]\n", &tc, &id, op, at, wr) != EOF) // carrega arquivo pela linha de comando no terminal
         // fptr usado para ler arquivo de variavel: "FILE *fptr = fopen(ARQUIVO_ENTRADA, "r");"
 //	while (fscanf(fptr, "%d %d %[^ ] %[^ ] %[^\n]\n", &tc, &id, op, at, wr) != EOF)
+        
 //	while (fgets(buf,sizeof(buf), fptr) != NULL)
         // carrega cada linha do arquivo
         while (fgets(buf,sizeof(buf), stdin) != NULL)
 	{       
             buf[strlen(buf) - 1] = '\0'; // eat the newline fgets() stores
             
-            // inicia variaveis com vazio/nulo
+            // inicia variaveis com vazio-nulo
             tc[0] = '\0';
             id[0] = '\0';
             op[0] = '\0';
